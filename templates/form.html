@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            margin-bottom: 10px;
+            display: block;
+        }
+        input[type="text"],
+        input[type="email"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        input[type="submit"], .home-button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        input[type="submit"]:hover, .home-button:hover {
+            background-color: #0056b3;
+        }
+        .alert {
+            padding: 10px;
+            background-color: #f44336; /* Red */
+            color: white;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .alert-success {
+            background-color: #4CAF50; /* Green */
+        }
+        .spinner {
+            border: 4px solid rgba(0,0,0,0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #007BFF;
+            animation: spin 1s infinite linear;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Data Submission Form</h1>
+    <form action="/submit_data" method="post" onsubmit="return submitForm(this);">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name">
+        
+        <label for="id_number">ID Number:</label>
+        <input type="text" id="id_number" name="id_number">
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email">
+        
+        <input type="submit" value="Submit">
+    </form>
+    <div id="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+    <button onclick="window.location.href='https://squirrel-site.vercel.app/'" class="home-button">Go Home</button>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <script>
+    function submitForm(form) {
+        const formData = new FormData(form);
+        const url = form.action;
+        
+        // Show loading indicator
+        document.getElementById('loading').style.display = 'block';
+
+        // Asynchronous form submission
+        fetch(url, {
+            method: 'POST',
+            body: formData
+        }).then(response => response.json())
+          .then(data => {
+              console.log('Success:', data);
+              // Process your response here
+              alert('Data received and processed successfully. Please check your email.');
+          }).catch((error) => {
+              console.error('Error:', error);
+              alert('Failed to process data.');
+          }).finally(() => {
+              // Hide loading indicator
+              document.getElementById('loading').style.display = 'none';
+          });
+
+        return false; // Prevent default form submission
+    }
+    </script>
+</body>
+</html>
