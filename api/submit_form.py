@@ -1,11 +1,9 @@
-from http.server import BaseHTTPRequestHandler
-from urllib.parse import parse_qs
-import json
+from flask import Flask, request, jsonify
+import requests
 import ssl
-from requests import Session
 from requests.adapters import HTTPAdapter
 
-url = 'http://3.111.52.141:5000/api/submit_form'
+app = Flask(__name__)
 
 class SSLAdapter(HTTPAdapter):
     def __init__(self, ssl_version=None, **kwargs):
@@ -20,19 +18,28 @@ class SSLAdapter(HTTPAdapter):
         context = ssl.SSLContext(self.ssl_version)
         return context
 
-class handler(BaseHTTPRequestHandler):
-    def do_POST(self):
-        length = int(self.headers.get('content-length'))
-        field_data = self.rfile.read(length)
-        data = json.loads(field_data)
+# Define the route for your form submission
+@app.route('/api/submit_form', methods=['POST'])
+def submit_form():
+    content = request.json
 
-        with Session() as session:
-            session.mount('https://', SSLAdapter(ssl_version=ssl.PROTOCOL_TLSv1_2))
-            response = session.post(url, json=data)
-            result = response.json()
+    url = 'http://3.111.52.141:5000/api/submit_form'  # The Flask API URL you are hitting
+    data = {
+        'name': content.get('name', ''),
+        'id_number': content.get('id_number', ''),
+        'email': content.get('email', '')
+    }
 
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        self.wfile.write(json.dumps(result).encode())
+    with requests.Session() as session:
+        session.mount('https://', SSLAdapter(ssl_version=ssl.PROTOCOL_TLSv1_2))
+        response = session.post(url, json=data)
+    
+    if response.status_code == 200:
+        result = {"status": "success", "data": response.json()}
+    else:
+        result = {"status": "error", "message": "Failed to submit data"}
 
+    return jsonify(result)
+
+# if __name__ == '__main__':
+    # app.run(debug=True)

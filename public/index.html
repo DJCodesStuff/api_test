@@ -4,10 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Form</title>
+    <script>
+        // Function to handle form submission
+        function handleSubmit(event) {
+            event.preventDefault();
+            var form = document.getElementById('submitForm');
+            var formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: formData.get('name'),
+                    id_number: formData.get('id_number'),
+                    email: formData.get('email')
+                })
+            }).then(response => response.json())
+              .then(data => {
+                  document.getElementById('response').textContent = JSON.stringify(data);
+              }).catch(error => console.error('Error:', error));
+        }
+    </script>
 </head>
 <body>
     <h1>Form Submission</h1>
-    <form id="submitForm">
+    <form id="submitForm" method="POST" action="/api/submit_form" onsubmit="handleSubmit(event)">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
         <br>
@@ -20,7 +42,5 @@
         <button type="submit">Submit</button>
     </form>
     <div id="response"></div>
-
-    <script src="script.js"></script>
 </body>
 </html>
