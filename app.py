@@ -4,7 +4,7 @@ import ssl
 from requests.adapters import HTTPAdapter
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Needed for flash messages to work
+# app.secret_key = 'your_secret_key'  # Needed for flash messages to work
 
 class SSLAdapter(HTTPAdapter):
     """Custom HTTPAdapter for specifying SSL version."""
@@ -46,4 +46,4 @@ def submit_data():
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=6969)
