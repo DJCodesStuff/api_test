@@ -5,6 +5,8 @@ import ssl
 from requests import Session
 from requests.adapters import HTTPAdapter
 
+url = 'http://3.111.52.141:5000/api/submit_form'
+
 class SSLAdapter(HTTPAdapter):
     def __init__(self, ssl_version=None, **kwargs):
         self.ssl_version = ssl_version
@@ -26,7 +28,7 @@ class handler(BaseHTTPRequestHandler):
 
         with Session() as session:
             session.mount('https://', SSLAdapter(ssl_version=ssl.PROTOCOL_TLSv1_2))
-            response = session.post('http://your-api-url', json=data)
+            response = session.post(url, json=data)
             result = response.json()
 
         self.send_response(200)
