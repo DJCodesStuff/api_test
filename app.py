@@ -33,7 +33,7 @@ def submit_data():
         'id_number': request.form['id_number'],
         'email': request.form['email']
     }
-    url = 'http://3.111.52.141:5000/api/submit_form'  # Replace with your actual API endpoint
+    url = 'http://13.127.54.82:5000/api/submit_form'  # Replace with your actual API endpoint
     with requests.Session() as session:
         session.mount('https://', SSLAdapter(ssl_version=ssl.PROTOCOL_TLSv1_2))
         response = session.post(url, json=data)
